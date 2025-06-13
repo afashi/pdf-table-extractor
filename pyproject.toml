@@ -1,0 +1,41 @@
+[project]
+name = "pdf-table-extractor"
+version = "1.0.0"
+description = "Asynchronous PDF title extraction service"
+authors = [{ name = "zhou" }]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "psycopg2-binary",  # PostgreSQL驱动
+    "pydantic",
+    "pydantic_settings",
+    "celery", # Celery与RabbitMQ集成
+    "tenacity",         # 用于实现优雅的重试逻辑
+    "python-multipart", # FastAPI文件上传所需
+    "alembic",          # 数据库迁移工具 (可选，推荐)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0"
+]
+
+[tool.setuptools]
+packages = ["pdf_extractor"]
+package-dir = { "" = "src" }
+
+[tool.ruff]
+# Ruff linter and formatter configuration
+line-length = 88
+select = ["E", "W", "F", "I", "C", "B"] # E/W (pycodestyle), F (pyflakes), I (isort), C (mccabe), B (flake8-bugbear)
+ignore = ["E501"] # line too long, handled by formatter
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+asyncio_mode = "auto"
