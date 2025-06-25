@@ -12,15 +12,16 @@ log = logging.getLogger(__name__)
 
 # 创建数据库引擎
 # create_engine 是 SQLAlchemy 的核心接口，用于连接数据库。
+print(settings.effective_alembic_database_url)
 engine = create_engine(
-    settings.SQLALCHEMY_DATABASE_URI,
+    settings.postgres.url,
 
     # --- 连接池配置 ---
     # 连接池中保持的最小连接数。
-    pool_size=settings.DB_POOL_SIZE,
+    pool_size=settings.postgres.pool_size,
 
     # 连接池中允许超出 pool_size 的最大连接数。
-    max_overflow=settings.DB_MAX_OVERFLOW,
+    max_overflow=50,
 
     # 自动回收空闲连接的时间（秒），防止因防火墙或DB自身超时导致连接失效。
     pool_recycle=3600,

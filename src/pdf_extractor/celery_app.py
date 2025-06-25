@@ -7,10 +7,11 @@ from .core.logger import JsonFormatter
 from .db.session import DBTask
 
 # --- 1. 创建 Celery 实例 ---
+print(settings.rabbitmq.url)
 celery_app = Celery(
     "pdf_extractor",
-    broker=settings.celery_broker_url,
-    backend=settings.celery_result_backend,
+    broker=settings.rabbitmq.url,
+    backend='rpc://',
     # 更新这里：指向新的任务模块路径
     include=["src.pdf_extractor.worker.tasks"],
     task_cls=DBTask,

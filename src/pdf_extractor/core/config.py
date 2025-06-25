@@ -2,6 +2,7 @@ from pydantic import BaseModel, PostgresDsn, AmqpDsn, Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
+
 # --- 嵌套配置模型 ---
 class PostgresSettings(BaseModel):
     """PostgreSQL 数据库配置"""
@@ -10,18 +11,20 @@ class PostgresSettings(BaseModel):
     server: str = "db"
     port: int = 5432
     db: str = "pdf_parser_db"
+    pool_size: int = 50
 
     # 使用 @computed_field 派生出最终的 DSN
     # 它会被 Pydantic 验证和缓存，行为更像一个真正的字段
     @computed_field
     @property
-    def url(self):
+    def url(self) -> str:
         """生成并验证数据库连接 DSN"""
         return f"postgresql+asyncpg://{self.user}:{self.password}@{self.server}:{self.port}/{self.db}"
 
+
 class RabbitMQSettings(BaseModel):
     """RabbitMQ 配置"""
-    host: str = "rabbitmq"
+    host: str = "127.0.0.1"
     port: int = 5672
     user: str = "guest"
     password: str = "guest"
@@ -31,7 +34,7 @@ class RabbitMQSettings(BaseModel):
 
     @computed_field
     @property
-    def url(self):
+    def url(self) -> str:
         """生成并验证 RabbitMQ 连接 URL"""
         return f"amqp://{self.user}:{self.password}@{self.host}:{self.port}{self.vhost}"
 
