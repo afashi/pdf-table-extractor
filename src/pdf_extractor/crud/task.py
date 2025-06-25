@@ -10,7 +10,7 @@ from ..schemas import task as task_schema
 from .base import CRUDBase  # 假设 CRUDBase 在 base.py 中
 
 
-class CRUDTask(CRUDBase[models.Task, task_schema.TaskCreate, task_schema.TaskUpdate]):
+class CRUDTask(CRUDBase[models.Task, task_schema.TaskCreateResponse, task_schema.TaskUpdate]):
     """
     针对 Task 模型的特定 CRUD 操作。
     所有方法都不再包含 db.commit()。
@@ -29,7 +29,6 @@ class CRUDTask(CRUDBase[models.Task, task_schema.TaskCreate, task_schema.TaskUpd
         """
         db_obj = models.Task(
             filename=obj_in.filename,
-            status="pending"
         )
         db.add(db_obj)
         db.flush()  # 将更改发送到数据库事务中，以便获取 ID 等默认值

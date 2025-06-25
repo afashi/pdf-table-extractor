@@ -11,7 +11,6 @@ class PostgresSettings(BaseModel):
     server: str = "db"
     port: int = 5432
     db: str = "pdf_parser_db"
-    pool_size: int = 50
 
     # 使用 @computed_field 派生出最终的 DSN
     # 它会被 Pydantic 验证和缓存，行为更像一个真正的字段
@@ -19,7 +18,7 @@ class PostgresSettings(BaseModel):
     @property
     def url(self) -> str:
         """生成并验证数据库连接 DSN"""
-        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.server}:{self.port}/{self.db}"
+        return f"postgresql://{self.user}:{self.password}@{self.server}:{self.port}/{self.db}"
 
 
 class RabbitMQSettings(BaseModel):

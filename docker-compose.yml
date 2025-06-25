@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # 1. 数据库服务 (PostgreSQL) - 保持不变
   db:
-    image: postgres:13-alpine
+    image: postgres:17-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -38,50 +38,50 @@ services:
       retries: 5
 
   # 3. FastAPI 应用服务 (API) - 更新
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: uvicorn src.pdf_extractor.main:app --host 0.0.0.0 --port 8000 --reload
-    volumes:
-      - ./src:/app/src
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-pdf_extractor_db}
-      # 更新 Broker URL 以指向 RabbitMQ
-      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER:-guest}:${RABBITMQ_DEFAULT_PASS:-guest}@rabbitmq:5672/
-      # 更新 Backend URL 以使用 RabbitMQ 的 RPC 模式
-      - CELERY_RESULT_BACKEND=rpc://
-      - LOG_LEVEL=DEBUG
-    depends_on:
-      db:
-        condition: service_healthy
-      # 更新依赖为 rabbitmq
-      rabbitmq:
-        condition: service_healthy
-
-  # 4. Celery Worker 服务 - 更新
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: celery -A src.pdf_extractor.worker.celery_app:celery_app worker --loglevel=INFO --concurrency=2
-    volumes:
-      - ./src:/app/src
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-pdf_extractor_db}
-      # 更新 Broker URL 以指向 RabbitMQ
-      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER:-guest}:${RABBITMQ_DEFAULT_PASS:-guest}@rabbitmq:5672/
-      # 更新 Backend URL 以使用 RabbitMQ 的 RPC 模式
-      - CELERY_RESULT_BACKEND=rpc://
-      - LOG_LEVEL=INFO
-    depends_on:
-      db:
-        condition: service_healthy
-      # 更新依赖为 rabbitmq
-      rabbitmq:
-        condition: service_healthy
+#  api:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: uvicorn src.pdf_extractor.main:app --host 0.0.0.0 --port 8000 --reload
+#    volumes:
+#      - ./src:/app/src
+#    ports:
+#      - "8000:8000"
+#    environment:
+#      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-pdf_extractor_db}
+#      # 更新 Broker URL 以指向 RabbitMQ
+#      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER:-guest}:${RABBITMQ_DEFAULT_PASS:-guest}@rabbitmq:5672/
+#      # 更新 Backend URL 以使用 RabbitMQ 的 RPC 模式
+#      - CELERY_RESULT_BACKEND=rpc://
+#      - LOG_LEVEL=DEBUG
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      # 更新依赖为 rabbitmq
+#      rabbitmq:
+#        condition: service_healthy
+#
+#  # 4. Celery Worker 服务 - 更新
+#  worker:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: celery -A src.pdf_extractor.worker.celery_app:celery_app worker --loglevel=INFO
+#    volumes:
+#      - ./src:/app/src
+#    environment:
+#      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-pdf_extractor_db}
+#      # 更新 Broker URL 以指向 RabbitMQ
+#      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER:-guest}:${RABBITMQ_DEFAULT_PASS:-guest}@rabbitmq:5672/
+#      # 更新 Backend URL 以使用 RabbitMQ 的 RPC 模式
+#      - CELERY_RESULT_BACKEND=rpc://
+#      - LOG_LEVEL=INFO
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      # 更新依赖为 rabbitmq
+#      rabbitmq:
+#        condition: service_healthy
 
 volumes:
   postgres_data:

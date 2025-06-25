@@ -1,4 +1,3 @@
-import logging
 from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 
@@ -16,7 +15,7 @@ async def lifespan(app: FastAPI):
     logger.info("==================================================================")
     logger.info(f"PDF Extractor API - 启动中...")
     logger.info(f"日志级别: {settings.log_level.upper()}")
-    logger.info(f"Celery Broker: {settings.celery_broker_url}")
+    logger.info(f"Celery Broker: {settings.rabbitmq.url}")
     logger.info("==================================================================")
     yield
     # --- 应用关闭时执行 ---

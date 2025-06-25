@@ -18,7 +18,7 @@ engine = create_engine(
 
     # --- 连接池配置 ---
     # 连接池中保持的最小连接数。
-    pool_size=settings.postgres.pool_size,
+    pool_size=50,
 
     # 连接池中允许超出 pool_size 的最大连接数。
     max_overflow=50,
@@ -34,10 +34,10 @@ engine = create_engine(
 
     # --- 连接参数优化 ---
     # 为底层数据库驱动（如 psycopg2）传递额外参数。
-    connect_args={
-        # 设置TCP连接超时时间（秒），防止在数据库无响应时应用无限等待。
-        "connect_timeout": 5
-    }
+    # connect_args={
+    #     # 设置TCP连接超时时间（秒），防止在数据库无响应时应用无限等待。
+    #      "timeout": 5
+    # }
 )
 
 # 创建一个 SessionLocal 类

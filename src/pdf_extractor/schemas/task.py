@@ -1,7 +1,7 @@
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, Any
 from datetime import datetime
 from uuid import UUID
@@ -13,6 +13,7 @@ class TaskStatus(str, Enum):
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
 
+
 # --- Pydantic Schemas for Task ---
 
 class TaskBase(BaseModel):
@@ -22,12 +23,17 @@ class TaskBase(BaseModel):
     filename: Optional[str]
 
 
-class TaskCreateResponse(TaskBase):
+class TaskCreate(TaskBase):
     """
     用于创建新任务的 Schema。
     API 在接收创建请求时，会用此模型验证请求体。
     """
-    task_id: str
+
+
+class TaskCreateResponse(TaskBase):
+    task_id: Optional[str] = None
+    filename: Optional[str] = None
+    message: Optional[str] = None
 
 
 class TaskUpdate(BaseModel):
@@ -45,16 +51,16 @@ class TaskInDBBase(TaskBase):
     存储在数据库中的 Task 模型的基础 Schema。
     包含了从数据库读取时必然存在的字段。
     """
-    id: UUID = uuid.UUID
-    status: str= None
+    # 2. 使用 Field 和 default_factory 来生成默认的 UUID
+    id: UUID = Field(default_factory=uuid.uuid4)
+
+    # 3. 将所有可能为 None 的字段用 Optional[] 包装
+    status: Optional[str] = None
     result: Optional[Any] = None
     error_message: Optional[str] = None
-    created_at: datetime= None
-    updated_at: datetime= None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
-    # Pydantic V2 or higher
-    # 允许 Pydantic 模型从 ORM 对象（如 SQLAlchemy 模型实例）创建，
-    # 实现 ORM 对象到 Schema 的自动映射。
     class Config:
         from_attributes = True
 
