@@ -1,8 +1,17 @@
+import uuid
+from enum import Enum
+
 from pydantic import BaseModel
 from typing import Optional, Any
 from datetime import datetime
 from uuid import UUID
 
+
+class TaskStatus(str, Enum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
 
 # --- Pydantic Schemas for Task ---
 
@@ -10,15 +19,15 @@ class TaskBase(BaseModel):
     """
     基础 Schema，包含所有 Task 共有的字段。
     """
-    filename: Optional[str] = None
+    filename: Optional[str]
 
 
-class TaskCreate(TaskBase):
+class TaskCreateResponse(TaskBase):
     """
     用于创建新任务的 Schema。
     API 在接收创建请求时，会用此模型验证请求体。
     """
-    filename: str
+    task_id: str
 
 
 class TaskUpdate(BaseModel):
@@ -36,12 +45,12 @@ class TaskInDBBase(TaskBase):
     存储在数据库中的 Task 模型的基础 Schema。
     包含了从数据库读取时必然存在的字段。
     """
-    id: UUID
-    status: str
+    id: UUID = uuid.UUID
+    status: str= None
     result: Optional[Any] = None
     error_message: Optional[str] = None
-    created_at: datetime
-    updated_at: datetime
+    created_at: datetime= None
+    updated_at: datetime= None
 
     # Pydantic V2 or higher
     # 允许 Pydantic 模型从 ORM 对象（如 SQLAlchemy 模型实例）创建，

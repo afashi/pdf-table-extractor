@@ -23,7 +23,7 @@
 
 ## 系统架构
 
-系统采用“启动-回调”模式来处理对第三方`minerU`服务的长耗时调用。此模式效率最高，但前提是`minerU`服务支持Webhook回调。
+系统采用“启动-回调”模式来处理对第三方`minerU`服务的长耗时调用。
 
 ```mermaid
 sequenceDiagram

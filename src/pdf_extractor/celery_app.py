@@ -4,6 +4,7 @@ from celery.signals import after_setup_logger
 
 from .core.config import settings
 from .core.logger import JsonFormatter
+from .db.session import DBTask
 
 # --- 1. 创建 Celery 实例 ---
 celery_app = Celery(
@@ -12,6 +13,7 @@ celery_app = Celery(
     backend=settings.celery_result_backend,
     # 更新这里：指向新的任务模块路径
     include=["src.pdf_extractor.worker.tasks"],
+    task_cls=DBTask,
 )
 
 # --- 2. Celery 配置 ---

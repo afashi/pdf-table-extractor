@@ -1,3 +1,4 @@
+import celery
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from typing import Iterator
@@ -68,6 +69,7 @@ def get_db() -> Iterator[Session]:
     finally:
         db.close()
 
+
 # --- 模式二：自动事务控制 (适用于 POST, PUT, DELETE) ---
 @contextmanager
 def get_db_with_commit() -> Iterator[Session]:
@@ -88,3 +90,36 @@ def get_db_with_commit() -> Iterator[Session]:
         raise
     finally:
         db.close()
+
+
+class DBTask(celery.Task):
+    """
+    一个抽象的Celery Task基类，它能自动完成以下工作:
+    1. 注入一个数据库会话 (Session)。
+    2. 如果任务成功，自动提交事务 (commit)。
+    3. 如果任务失败，自动回滚事务 (rollback)。
+    4. 无论成功与否，都确保会话被关闭 (close)。
+    """
+    abstract = True
+
+    def __call__(self, *args, **kwargs):
+        """
+        在任务执行时，这个方法会被调用。
+        我们在这里封装了完整的数据库事务管理逻辑。
+        """
+        db = SessionLocal()
+        try:
+            # 将数据库会话作为第一个位置参数注入
+            result = super().__call__(db, *args, **kwargs)
+            # 如果任务函数成功执行（没有抛出异常），则提交事务
+            db.commit()
+            return result
+        except Exception as e:
+            log.error("数据库事务回滚，错误: %s", e)
+            # 如果任务执行过程中发生任何异常，则回滚事务
+            db.rollback()
+            # 重新抛出异常，以便Celery知道任务失败了，并进行相应的处理（如重试）
+            raise
+        finally:
+            # 最后，无论如何都要关闭会话，释放连接
+            db.close()
