@@ -15,29 +15,12 @@ log = logging.getLogger(__name__)
 print(settings.effective_alembic_database_url)
 engine = create_engine(
     settings.postgres.url,
-
-    # --- 连接池配置 ---
-    # 连接池中保持的最小连接数。
-    pool_size=50,
-
-    # 连接池中允许超出 pool_size 的最大连接数。
-    max_overflow=50,
-
-    # 自动回收空闲连接的时间（秒），防止因防火墙或DB自身超时导致连接失效。
-    pool_recycle=3600,
-
-    # 在每次从连接池获取连接时，先进行一次简单的 "ping" 查询来检查连接是否有效。
+    pool_size=15,
+    max_overflow=30,
+    pool_timeout=300,
+    pool_recycle=1800,
     pool_pre_ping=True,
-
-    # 获取连接的超时时间（秒）。
-    pool_timeout=30,
-
-    # --- 连接参数优化 ---
-    # 为底层数据库驱动（如 psycopg2）传递额外参数。
-    # connect_args={
-    #     # 设置TCP连接超时时间（秒），防止在数据库无响应时应用无限等待。
-    #      "timeout": 5
-    # }
+    executemany_mode="values"
 )
 
 # 创建一个 SessionLocal 类
