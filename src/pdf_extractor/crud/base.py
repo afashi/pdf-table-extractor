@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from pdf_extractor.db.base import Base
+from pdf_extractor.db.models import Base
 
 # 为 CRUDBase 定义泛型类型，使其可以适用于任何 SQLAlchemy 模型和 Pydantic Schema
 ModelType = TypeVar("ModelType", bound=Base)

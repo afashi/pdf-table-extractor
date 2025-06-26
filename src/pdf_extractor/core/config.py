@@ -18,7 +18,7 @@ class PostgresSettings(BaseModel):
     @property
     def url(self) -> str:
         """生成并验证数据库连接 DSN"""
-        return f"postgresql+psycopg:://{self.user}:{self.password}@{self.server}:{self.port}/{self.db}"
+        return f"postgresql+psycopg://{self.user}:{self.password}@{self.server}:{self.port}/{self.db}"
 
 
 class RabbitMQSettings(BaseModel):

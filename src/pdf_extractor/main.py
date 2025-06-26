@@ -8,7 +8,7 @@ from .api import api_router  # 1. 只需导入 api_router
 
 # --- 1. 应用生命周期事件 ---
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(fastapi_app: FastAPI):
     """
     应用启动和关闭时执行的事件管理器。
     """

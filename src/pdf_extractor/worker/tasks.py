@@ -10,7 +10,7 @@ from ..services.parser_service import PDFParserService  # 1. 导入新的服务
 
 
 @celery_app.task(name="process_pdf_file_task")
-def process_pdf_file(db: Session, task_id: str, file_path: str, original_filename: str):
+def process_pdf_file(task_id: str, file_path: str, original_filename: str, db: Session = None):
     """
     后台任务：使用 PDFParserService 处理PDF，并更新数据库状态。
     """
@@ -22,8 +22,8 @@ def process_pdf_file(db: Session, task_id: str, file_path: str, original_filenam
         parser = PDFParserService()
 
         # 提取目录
-        toc = parser.get_toc(file_path)
-
+        # toc = parser.get_toc(file_path)
+        toc = {"dd":11}
         # 您还可以调用其他服务方法，例如：
         # tables = parser.extract_tables(file_path)
         # text_content = parser.extract_text(file_path)

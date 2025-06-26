@@ -20,7 +20,6 @@ engine = create_engine(
     pool_timeout=300,
     pool_recycle=1800,
     pool_pre_ping=True,
-    executemany_mode="values"
 )
 
 # 创建一个 SessionLocal 类
@@ -91,10 +90,13 @@ class DBTask(celery.Task):
         在任务执行时，这个方法会被调用。
         我们在这里封装了完整的数据库事务管理逻辑。
         """
+        print("<<<<< DBTask is being called! Creating database session... >>>>>")
+
         db = SessionLocal()
         try:
             # 将数据库会话作为第一个位置参数注入
-            result = super().__call__(db, *args, **kwargs)
+            kwargs['db'] = db
+            result = super().__call__(*args, **kwargs)
             # 如果任务函数成功执行（没有抛出异常），则提交事务
             db.commit()
             return result
