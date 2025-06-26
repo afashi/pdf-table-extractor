@@ -12,16 +12,12 @@ async def lifespan(app: FastAPI):
     """
     应用启动和关闭时执行的事件管理器。
     """
-    logger.info("==================================================================")
     logger.info(f"PDF Extractor API - 启动中...")
     logger.info(f"日志级别: {settings.log_level.upper()}")
     logger.info(f"Celery Broker: {settings.rabbitmq.url}")
-    logger.info("==================================================================")
     yield
     # --- 应用关闭时执行 ---
-    logger.info("==================================================================")
     logger.info("PDF Extractor API - 已关闭")
-    logger.info("==================================================================")
 
 
 # --- 2. 创建 FastAPI 应用实例 ---

@@ -1,15 +1,15 @@
 import uuid
 from typing import Any, Dict
 
-from sqlalchemy import String, Text, DateTime, func, Enum as sa_Enum
+from sqlalchemy import String, Text, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import JSON
 
 # 假设 'base.py' 在同一目录下或可访问的路径中
-from .base import Base
-from ..schemas.task import TaskStatus
 
+from sqlalchemy.orm import declarative_base
+Base = declarative_base()
 
 class Task(Base):
     """
@@ -29,7 +29,7 @@ class Task(Base):
 
     # 3. 将 status 字段的类型改为枚举 (Enum)
     status: Mapped[str] = mapped_column(
-        String(50),  # 定义一个合理的长度，例如 50
+        String(51),  # 定义一个合理的长度，例如 50
         nullable=False,
         default="PENDING", # 默认值现在是一个纯字符串
         index=True,

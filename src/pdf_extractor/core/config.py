@@ -48,7 +48,7 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    project_name: str = "PDF Parser Service"
+    project_name: str = "PDF Table Extractor Service"
     api_v1_str: str = "/api/v1"
     log_level: str = "INFO"
     max_pdf_parse_time_seconds: int = 3000
